@@ -1,0 +1,70 @@
+# OpenSSL configuration for Signature & Authentication Intermediate CA (ML-DSA-65)
+# Issues end-entity certs for: document signing, email signing, code signing, client authentication
+
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = .
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+crlnumber         = $dir/crlnumber
+RANDFILE          = $dir/private/.rand
+
+private_key       = $dir/private/intermediate-sig.key
+certificate       = $dir/certs/intermediate-sig.crt
+crl               = $dir/crl/intermediate-sig.crl.pem
+
+default_days      = 825
+default_crl_days  = 30
+default_md        = sha512
+preserve          = no
+policy            = policy_loose
+copy_extensions   = copy
+unique_subject    = no
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits        = 2048
+distinguished_name  = req_distinguished_name
+string_mask         = utf8only
+default_md          = sha512
+prompt              = no
+
+[ req_distinguished_name ]
+C  = US
+ST = California
+L  = San Francisco
+O  = Example Organization
+OU = Quantum Safe PKI - Signature CA
+CN = Example Signature Intermediate CA (ML-DSA-65)
+emailAddress = pki-admin@example.org
+
+[ v3_intermediate_ca ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints       = critical, CA:TRUE, pathlen:0
+keyUsage               = critical, keyCertSign, cRLSign
+
+# End-entity profile: digital signatures + authentication
+[ signature_cert ]
+basicConstraints       = critical, CA:FALSE
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+keyUsage               = critical, digitalSignature, nonRepudiation
+extendedKeyUsage       = clientAuth, codeSigning, emailProtection
+crlDistributionPoints  = URI:http://pki.example.org/crl/intermediate-sig.crl
+
+[ crl_ext ]
+authorityKeyIdentifier = keyid:always

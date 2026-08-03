@@ -1,0 +1,75 @@
+# OpenSSL configuration for Quantum-Safe Root CA (ML-DSA-87)
+# Generated for quantum-safe PKI project
+
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = .
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+crlnumber         = $dir/crlnumber
+RANDFILE          = $dir/private/.rand
+
+private_key       = $dir/private/root-ca.key
+certificate       = $dir/certs/root-ca.crt
+crl               = $dir/crl/root-ca.crl.pem
+
+default_days      = 7300
+default_crl_days  = 30
+default_md        = sha512
+preserve          = no
+policy            = policy_strict
+unique_subject    = no
+
+[ policy_strict ]
+countryName             = match
+stateOrProvinceName     = optional
+organizationName        = match
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits        = 2048
+distinguished_name  = req_distinguished_name
+string_mask         = utf8only
+default_md          = sha512
+x509_extensions     = v3_ca
+prompt              = no
+
+[ req_distinguished_name ]
+C  = US
+ST = California
+L  = San Francisco
+O  = Example Organization
+OU = Quantum Safe PKI
+CN = Example Root CA (ML-DSA-87)
+emailAddress = pki-admin@example.org
+
+[ v3_ca ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints       = critical, CA:TRUE
+keyUsage               = critical, keyCertSign, cRLSign
+
+[ v3_intermediate_ca ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints       = critical, CA:TRUE, pathlen:0
+keyUsage               = critical, keyCertSign, cRLSign
+
+[ crl_ext ]
+authorityKeyIdentifier = keyid:always
