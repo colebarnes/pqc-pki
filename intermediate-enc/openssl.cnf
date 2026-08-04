@@ -56,6 +56,7 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer
 basicConstraints       = critical, CA:TRUE, pathlen:0
 keyUsage               = critical, keyCertSign, cRLSign
+authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/root-ca.crt
 
 # End-entity profile: encryption / keyEncipherment with ML-KEM
 [ encryption_cert ]
@@ -64,6 +65,7 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer
 keyUsage               = critical, keyEncipherment
 crlDistributionPoints  = URI:http://pki.example.org/crl/intermediate-enc.crl
+authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/intermediate-enc.crt
 # extendedKeyUsage can be left empty or set to specific if needed
 
 [ crl_ext ]
