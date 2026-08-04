@@ -35,7 +35,7 @@ STATE="California"
 LOCALITY="San Francisco"
 EMAIL="pki-admin@example.org"
 
-# Base URL used for Authority Information Access (caIssuers) and
+# Base URL used for Authority Information Access (caIssuers + OCSP) and
 # CRL Distribution Points. Override via environment variable, e.g.:
 #   PKI_BASE_URL=https://pki.myorg.com ./scripts/setup-pki.sh
 # or edit the default value below.
@@ -116,6 +116,7 @@ update_pki_urls() {
       sed -i \
         -e "s|https\?://[^/]*/certs/|${base}/certs/|g" \
         -e "s|https\?://[^/]*/crl/|${base}/crl/|g" \
+        -e "s|https\?://[^/]*/ocsp|${base}/ocsp|g" \
         "$f"
     fi
   done

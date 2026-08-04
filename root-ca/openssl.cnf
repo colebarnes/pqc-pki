@@ -70,7 +70,7 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer
 basicConstraints       = critical, CA:TRUE, pathlen:0
 keyUsage               = critical, keyCertSign, cRLSign
-authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/root-ca.crt
+authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/root-ca.crt, OCSP;URI:http://pki.example.org/ocsp
 
 [ crl_ext ]
 authorityKeyIdentifier = keyid:always

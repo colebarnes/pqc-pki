@@ -56,7 +56,7 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid:always,issuer
 basicConstraints       = critical, CA:TRUE, pathlen:0
 keyUsage               = critical, keyCertSign, cRLSign
-authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/root-ca.crt
+authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/root-ca.crt, OCSP;URI:http://pki.example.org/ocsp
 
 # End-entity profile: TLS server
 [ server_cert ]
@@ -66,7 +66,7 @@ authorityKeyIdentifier = keyid:always,issuer
 keyUsage               = critical, digitalSignature
 extendedKeyUsage       = serverAuth
 crlDistributionPoints  = URI:http://pki.example.org/crl/intermediate-tls.crl
-authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/intermediate-tls.crt
+authorityInfoAccess    = caIssuers;URI:http://pki.example.org/certs/intermediate-tls.crt, OCSP;URI:http://pki.example.org/ocsp
 # subjectAltName must be supplied via -addext or CSR copy_extensions
 
 [ crl_ext ]
