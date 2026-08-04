@@ -108,6 +108,8 @@ PKI_BASE_URL=https://pki.myorg.com ./scripts/setup-pki.sh
 
 The script rewrites the URLs in all `openssl.cnf` files before generating certificates. Re-running the script with a different `PKI_BASE_URL` updates the configuration files accordingly.
 
+**Note:** This project only *embeds* the URLs in the certificates. It is the responsibility of the host application (or operator) to actually publish the CA certificates, CRLs, and (if used) an OCSP responder at those locations.
+
 ## Issuing Additional Certificates
 
 **Signature / Authentication**
