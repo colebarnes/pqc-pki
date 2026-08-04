@@ -84,6 +84,30 @@ Or edit the `openssl.cnf` files directly for more advanced policy and extension 
 
 You can switch to smaller parameter sets (ML-DSA-44 / ML-KEM-512) or higher-security ones (ML-DSA-87 / ML-KEM-1024, closer to CNSA 2.0 guidance).
 
+### PKI Base URL (AIA & CRL Distribution Points)
+
+The setup script uses a configurable base URL for the following certificate extensions:
+
+| Extension | Purpose | Example URI |
+|-----------|---------|-------------|
+| **Authority Information Access – caIssuers** | Location of the issuer’s certificate | `http://pki.example.org/certs/root-ca.crt` |
+| **Authority Information Access – OCSP** | OCSP responder endpoint (not implemented yet) | `http://pki.example.org/ocsp` |
+| **CRL Distribution Points** | Location of the CRL | `http://pki.example.org/crl/intermediate-sig.crl` |
+
+**Default value:** `http://pki.example.org`
+
+**How to change it:**
+
+```bash
+# Option 1 – edit the default in scripts/setup-pki.sh
+PKI_BASE_URL="${PKI_BASE_URL:-https://pki.myorg.com}"
+
+# Option 2 – override at runtime
+PKI_BASE_URL=https://pki.myorg.com ./scripts/setup-pki.sh
+```
+
+The script rewrites the URLs in all `openssl.cnf` files before generating certificates. Re-running the script with a different `PKI_BASE_URL` updates the configuration files accordingly.
+
 ## Issuing Additional Certificates
 
 **Signature / Authentication**
@@ -145,7 +169,7 @@ Inspect a CRL:
 openssl crl -in intermediate-sig/crl/intermediate-sig.crl.pem -text -noout
 ```
 
-End-entity certificates include a `crlDistributionPoints` extension with a placeholder URI (`http://pki.example.org/crl/...`). Update the intermediate `openssl.cnf` files if you serve the CRLs from a real location.
+End-entity (and intermediate) certificates include a `crlDistributionPoints` extension. The base URL is controlled by the `PKI_BASE_URL` variable (see [Customization](#customization)).
 
 ## Verification
 
