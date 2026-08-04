@@ -11,6 +11,9 @@
 #   export LD_LIBRARY_PATH=/path/to/openssl-3.5/lib64   # if needed
 #   ./scripts/setup-pki.sh
 #
+#   # Custom base URL for AIA / CDP:
+#   PKI_BASE_URL=https://pki.myorg.com ./scripts/setup-pki.sh
+#
 set -euo pipefail
 
 # ---------------------------------------------------------------------------
@@ -31,6 +34,12 @@ COUNTRY="US"
 STATE="California"
 LOCALITY="San Francisco"
 EMAIL="pki-admin@example.org"
+
+# Base URL used for Authority Information Access (caIssuers) and
+# CRL Distribution Points. Override via environment variable, e.g.:
+#   PKI_BASE_URL=https://pki.myorg.com ./scripts/setup-pki.sh
+# or edit the default value below.
+PKI_BASE_URL="${PKI_BASE_URL:-http://pki.example.org}"
 
 # ---------------------------------------------------------------------------
 # Locate OpenSSL
@@ -84,6 +93,40 @@ ensure_dirs() {
   [[ -f "${base}/serial" ]] || echo 1000 > "${base}/serial"
   [[ -f "${base}/crlnumber" ]] || echo 1000 > "${base}/crlnumber"
 }
+
+# Update AIA and CDP URLs in all openssl.cnf files to use the configured base URL
+update_pki_urls() {
+  local base="${PKI_BASE_URL}"
+  # Remove trailing slash if present
+  base="${base%/}"
+
+  echo "    Using PKI base URL: ${base}"
+
+  local files=(
+    root-ca/openssl.cnf
+    intermediate-sig/openssl.cnf
+    intermediate-tls/openssl.cnf
+    intermediate-enc/openssl.cnf
+  )
+
+  for f in "${files[@]}"; do
+    if [[ -f "$f" ]]; then
+      # Replace any existing http(s)://... base with the configured one.
+      # This is intentionally broad so re-running the script with a new URL works.
+      sed -i \
+        -e "s|https\?://[^/]*/certs/|${base}/certs/|g" \
+        -e "s|https\?://[^/]*/crl/|${base}/crl/|g" \
+        "$f"
+    fi
+  done
+}
+
+# ---------------------------------------------------------------------------
+# Update AIA / CDP URLs
+# ---------------------------------------------------------------------------
+echo ""
+echo ">>> Updating AIA / CDP URLs"
+update_pki_urls
 
 # ---------------------------------------------------------------------------
 # 1. Root CA
